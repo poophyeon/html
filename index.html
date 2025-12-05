@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spotify Clone Player</title>
+
 <style>
   * { box-sizing: border-box; margin:0; padding:0; }
   body { 
@@ -13,7 +14,7 @@
     display: flex;
   }
 
-  /* 왼쪽 메뉴 영역 */
+  /* 왼쪽 메뉴 */
   .left-menu {
     width: 220px;
     background-color: #181818;
@@ -21,7 +22,6 @@
     padding: 20px;
   }
   .left-menu h1 { color: #1DB954; margin-bottom: 30px; }
-
   .left-menu a {
     display: block;
     text-decoration: none;
@@ -33,11 +33,35 @@
   .left-menu a:hover { color: white; }
 
   /* 오른쪽 메인 화면 */
-  .main {
-    flex: 1;
-    padding: 20px 30px;
+  .main { flex: 1; padding: 20px 30px; }
+
+  /* 홈 배너 */
+  .hero {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #1db954, #14803d);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  }
+  .hero h1 { font-size: 28px; font-weight: bold; }
+  .hero p { font-size: 16px; opacity: 0.9; }
+
+  /* 장르 라벨 */
+  .genre-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    border-left: 5px solid #1DB954;
   }
 
+  /* 앨범 카드 */
   .album-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -45,18 +69,40 @@
   }
 
   .album {
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s;
+    position: relative;
     background-color: #181818;
     padding: 10px;
     border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
   }
 
-  .album img { width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-  .album:hover img { transform: scale(1.05); }
+  .album img { 
+    width: 100%; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+    transition: 0.3s ease;
+  }
+
+  .album:hover img {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
 
   .album p { margin-top: 8px; font-size: 14px; }
+
+  /* 플레이 아이콘 */
+  .play-icon {
+    position: absolute;
+    font-size: 40px;
+    color: #1DB954;
+    bottom: 15px;
+    right: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .album:hover .play-icon { opacity: 1; }
 
   .album button {
     margin-top: 8px;
@@ -69,13 +115,25 @@
     font-size: 12px;
   }
 
+  /* 검색창 */
+  #searchInput {
+    width: 300px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: none;
+  }
+
   #youtubePlayer { display: none; margin-top: 25px; text-align: center; }
   iframe { width: 80%; max-width: 560px; height: 315px; border-radius: 12px; }
 
+  /* 라이브러리 */
   #library { display: none; }
   #library h2 { margin-bottom: 15px; }
-  #library ul { list-style: none; }
 
+  #library ul { list-style: none; }
   #library li {
     background-color: #1e1e1e;
     margin-bottom: 8px;
@@ -95,7 +153,6 @@
     cursor: pointer;
     font-size: 12px;
   }
-  #library li button:hover { background-color: #e74c3c; }
 </style>
 </head>
 <body>
@@ -103,33 +160,164 @@
 <div class="left-menu">
   <h1>MySpotify</h1>
   <a onclick="showHome()">홈</a>
-  <a onclick="showSongs()">노래</a> <!-- 추가됨 -->
+  <a onclick="showSongs()">노래</a>
   <a onclick="showLibrary()">내 라이브러리</a>
 </div>
 
 <div class="main">
 
-  <div class="album-container" id="albumContainer">
-    <!-- 15개의 음원 카드 생성 -->
-    <script>
-      const songData = [];
-      for (let i = 1; i <= 15; i++) {
-        songData.push({
-          title: `노래 제목 ${i}`,
-          videoId: "dQw4w9WgXcQ",
-          cover: `cover${(i % 8) + 1}.jpg`
-        });
-      }
-    </script>
+  <!-- 검색창 -->
+  <input type="text" id="searchInput" placeholder="노래 검색..." onkeyup="searchSongs()">
+
+  <!-- ⭐ 홈 화면 (장르별 Best 3 + Spotify 스타일 배너) -->
+  <div id="homePage">
+
+    <div class="hero">
+      <h1>오늘의 추천 플레이리스트</h1>
+      <p>지금 가장 인기 있는 음악을 감상해보세요!</p>
+    </div>
+
+    <h3 class="genre-label">🎵 발라드 Best 3</h3>
+    <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
+
+      <div class="album" onclick="playYouTube('4POtvDDCeng')">
+        <img src="cover1.jpg">
+        <p>발라드곡 1</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('Flee2PYOl1s')">
+        <img src="cover2.jpg">
+        <p>발라드곡 2</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('kIbyP2QW-1Y')">
+        <img src="cover3.jpg">
+        <p>발라드곡 3</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+    </div>
+
+    <h3 class="genre-label">🔥 힙합 Best 3</h3>
+    <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
+
+      <div class="album" onclick="playYouTube('videoD')">
+        <img src="cover4.jpg">
+        <p>힙합곡 1</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('videoE')">
+        <img src="cover5.jpg">
+        <p>힙합곡 2</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('videoF')">
+        <img src="cover6.jpg">
+        <p>힙합곡 3</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+    </div>
+
+    <h3 class="genre-label">🌎 팝송 Best 3</h3>
+    <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
+
+      <div class="album" onclick="playYouTube('videoG')">
+        <img src="cover7.jpg">
+        <p>팝송 1</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('videoH')">
+        <img src="cover8.jpg">
+        <p>팝송 2</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('videoK')">
+        <img src="cover3.jpg">
+        <p>팝송 3</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+    </div>
+
+    <h3 class="genre-label">⚡ EDM Best 3</h3>
+    <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
+
+      <div class="album" onclick="playYouTube('videoN')">
+        <img src="cover6.jpg">
+        <p>EDM 1</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('videoL')">
+        <img src="cover4.jpg">
+        <p>EDM 2</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+      <div class="album" onclick="playYouTube('videoM')">
+        <img src="cover5.jpg">
+        <p>EDM 3</p>
+        <div class="play-icon">▶</div>
+      </div>
+
+    </div>
+
+  </div> <!-- homePage 끝 -->
+
+  <!-- ⭐ 기존 전체 노래 목록 -->
+  <div id="albumContainer" style="display:none;">
+
+    <!-- 검색으로 필터링 가능 -->
+    <div class="album">
+      <img src="cover1.jpg" onclick="playYouTube('4POtvDDCeng')">
+      <p>노래 제목 1</p>
+      <button onclick="addToLibrary(event,'노래 제목 1','4POtvDDCeng')">내 라이브러리에 추가</button>
+    </div>
+
+    <div class="album">
+      <img src="cover2.jpg" onclick="playYouTube('Flee2PYOl1s')">
+      <p>노래 제목 2</p>
+      <button onclick="addToLibrary(event,'노래 제목 2','Flee2PYOl1s')">내 라이브러리에 추가</button>
+    </div>
+
+    <div class="album">
+      <img src="cover3.jpg" onclick="playYouTube('kIbyP2QW-1Y')">
+      <p>노래 제목 3</p>
+      <button onclick="addToLibrary(event,'노래 제목 3','kIbyP2QW-1Y')">내 라이브러리에 추가</button>
+    </div>
+
+    <!-- 4~15 기존 동일 -->
+    <div class="album"><img src="cover4.jpg" onclick="playYouTube('videoD')"><p>노래 제목 4</p><button onclick="addToLibrary(event,'노래 제목 4','videoD')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover5.jpg" onclick="playYouTube('videoE')"><p>노래 제목 5</p><button onclick="addToLibrary(event,'노래 제목 5','videoE')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover6.jpg" onclick="playYouTube('videoF')"><p>노래 제목 6</p><button onclick="addToLibrary(event,'노래 제목 6','videoF')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover7.jpg" onclick="playYouTube('videoG')"><p>노래 제목 7</p><button onclick="addToLibrary(event,'노래 제목 7','videoG')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover8.jpg" onclick="playYouTube('videoH')"><p>노래 제목 8</p><button onclick="addToLibrary(event,'노래 제목 8','videoH')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover1.jpg" onclick="playYouTube('videoI')"><p>노래 제목 9</p><button onclick="addToLibrary(event,'노래 제목 9','videoI')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover2.jpg" onclick="playYouTube('videoJ')"><p>노래 제목 10</p><button onclick="addToLibrary(event,'노래 제목 10','videoJ')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover3.jpg" onclick="playYouTube('videoK')"><p>노래 제목 11</p><button onclick="addToLibrary(event,'노래 제목 11','videoK')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover4.jpg" onclick="playYouTube('videoL')"><p>노래 제목 12</p><button onclick="addToLibrary(event,'노래 제목 12','videoL')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover5.jpg" onclick="playYouTube('videoM')"><p>노래 제목 13</p><button onclick="addToLibrary(event,'노래 제목 13','videoM')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover6.jpg" onclick="playYouTube('videoN')"><p>노래 제목 14</p><button onclick="addToLibrary(event,'노래 제목 14','videoN')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover7.jpg" onclick="playYouTube('videoO')"><p>노래 제목 15</p><button onclick="addToLibrary(event,'노래 제목 15','videoO')">내 라이브러리에 추가</button></div>
+  
   </div>
 
+  <!-- 유튜브 플레이어 -->
   <div id="youtubePlayer">
-    <iframe id="playerIframe" src=""
-      frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    <iframe id="playerIframe" src="" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
   </div>
 
-  <div id="library">
+  <!-- 라이브러리 -->
+  <div id="library" style="display:none;">
     <h2>내 라이브러리</h2>
     <ul id="libraryList"></ul>
   </div>
@@ -138,23 +326,6 @@
 
 <script>
 let librarySongs = [];
-
-// 화면 로딩 시 15개의 앨범 자동 생성
-window.onload = function () {
-  const container = document.getElementById("albumContainer");
-  songData.forEach((song, i) => {
-    const div = document.createElement("div");
-    div.className = "album";
-
-    div.innerHTML = `
-      <img src="${song.cover}" onclick="playYouTube('${song.videoId}')">
-      <p>${song.title}</p>
-      <button onclick="addToLibrary(event, '${song.title}', '${song.videoId}')">내 라이브러리에 추가</button>
-    `;
-
-    container.appendChild(div);
-  });
-};
 
 // 유튜브 재생
 function playYouTube(videoId) {
@@ -167,20 +338,48 @@ function playYouTube(videoId) {
 // 라이브러리에 추가
 function addToLibrary(event, songTitle, videoId) {
   event.stopPropagation();
-  if(!librarySongs.some(song => song.title === songTitle)){
-    librarySongs.push({title: songTitle, videoId: videoId});
+  if (!librarySongs.some(song => song.title === songTitle)) {
+    librarySongs.push({ title: songTitle, videoId: videoId });
     alert(`${songTitle}이(가) 추가되었습니다.`);
   } else {
     alert(`${songTitle}은 이미 있습니다.`);
   }
 }
 
-// 라이브러리 보기
+// 검색 기능
+function searchSongs() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const albums = document.querySelectorAll("#albumContainer .album");
+
+  albums.forEach(album => {
+    const title = album.querySelector("p").textContent.toLowerCase();
+
+    album.style.display = title.includes(input) ? "block" : "none";
+  });
+}
+
+// 홈으로 이동
+function showHome() {
+  document.getElementById("homePage").style.display = "block";
+  document.getElementById("albumContainer").style.display = "none";
+  document.getElementById("library").style.display = "none";
+  document.getElementById("searchInput").style.display = "none";
+}
+
+// 노래 목록
+function showSongs() {
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("albumContainer").style.display = "grid";
+  document.getElementById("library").style.display = "none";
+  document.getElementById("searchInput").style.display = "block";
+}
+
+// 라이브러리
 function showLibrary() {
   document.getElementById("homePage").style.display = "none";
   document.getElementById("albumContainer").style.display = "none";
+  document.getElementById("searchInput").style.display = "none";
 
-  const libraryDiv = document.getElementById('library');
   const list = document.getElementById('libraryList');
   list.innerHTML = '';
 
@@ -205,99 +404,9 @@ function showLibrary() {
     });
   }
 
-  libraryDiv.style.display = 'block';
-}
-
-// 홈 화면
-function showHome() {
-  document.getElementById('albumContainer').style.display = 'grid';
-  document.getElementById('library').style.display = 'none';
+  document.getElementById("library").style.display = "block";
 }
 </script>
 
 </body>
 </html>
-
-<!-- ⭐ Home 화면: 장르별 Best 3 -->
-<div id="homePage">
-  <h2>장르별 Best 3 노래</h2>
-
-  <!-- 발라드 -->
-  <h3 style="margin-top:20px;">🎵 발라드 Best 3</h3>
-  <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
-
-    <div class="album">
-      <img src="cover1.jpg" onclick="playYouTube('4POtvDDCeng')">
-      <p>발라드곡 1</p>
-    </div>
-
-    <div class="album">
-      <img src="cover2.jpg" onclick="playYouTube('Flee2PYOl1s')">
-      <p>발라드곡 2</p>
-    </div>
-
-    <div class="album">
-      <img src="cover3.jpg" onclick="playYouTube('kIbyP2QW-1Y')">
-      <p>발라드곡 3</p>
-    </div>
-
-  </div>
-
-  <!-- 힙합 -->
-  <h3 style="margin-top:25px;">🔥 힙합 Best 3</h3>
-  <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="album">
-      <img src="cover4.jpg" onclick="playYouTube('videoD')">
-      <p>힙합곡 1</p>
-    </div>
-
-    <div class="album">
-      <img src="cover5.jpg" onclick="playYouTube('videoE')">
-      <p>힙합곡 2</p>
-    </div>
-
-    <div class="album">
-      <img src="cover6.jpg" onclick="playYouTube('videoF')">
-      <p>힙합곡 3</p>
-    </div>
-  </div>
-
-  <!-- 팝송 -->
-  <h3 style="margin-top:25px;">🌎 팝송 Best 3</h3>
-  <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="album">
-      <img src="cover7.jpg" onclick="playYouTube('videoG')">
-      <p>팝송 1</p>
-    </div>
-
-    <div class="album">
-      <img src="cover8.jpg" onclick="playYouTube('videoH')">
-      <p>팝송 2</p>
-    </div>
-
-    <div class="album">
-      <img src="cover3.jpg" onclick="playYouTube('videoK')">
-      <p>팝송 3</p>
-    </div>
-  </div>
-
-  <!-- EDM -->
-  <h3 style="margin-top:25px;">⚡ EDM Best 3</h3>
-  <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="album">
-      <img src="cover6.jpg" onclick="playYouTube('videoN')">
-      <p>EDM 1</p>
-    </div>
-
-    <div class="album">
-      <img src="cover4.jpg" onclick="playYouTube('videoL')">
-      <p>EDM 2</p>
-    </div>
-
-    <div class="album">
-      <img src="cover5.jpg" onclick="playYouTube('videoM')">
-      <p>EDM 3</p>
-    </div>
-  </div>
-
-</div>
