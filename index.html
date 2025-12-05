@@ -80,22 +80,22 @@
     gap: 20px;
   }
 
-  .album {
-    position: relative;
-    background-color: #181818;
-    padding: 10px;
+.album {
+    width: 320px;
+    padding: 0;
     border-radius: 12px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s;
-  }
+}
 
-  .album img { 
-    width: 100%; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-    transition: 0.3s ease;
-  }
+.album img {
+    width: 100%;
+    height: 180px;
+    border-radius: 12px 12px 0 0;
+    object-fit: cover;
+}
+
 
   .album:hover img {
     transform: scale(1.08);
