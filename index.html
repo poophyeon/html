@@ -68,7 +68,6 @@
     cursor: pointer;
     font-size: 12px;
   }
-  .album button:hover { background-color: #17a44c; }
 
   #youtubePlayer { display: none; margin-top: 25px; text-align: center; }
   iframe { width: 80%; max-width: 560px; height: 315px; border-radius: 12px; }
@@ -76,6 +75,7 @@
   #library { display: none; }
   #library h2 { margin-bottom: 15px; }
   #library ul { list-style: none; }
+
   #library li {
     background-color: #1e1e1e;
     margin-bottom: 8px;
@@ -103,6 +103,7 @@
 <div class="left-menu">
   <h1>MySpotify</h1>
   <a onclick="showHome()">홈</a>
+  <a onclick="showSongs()">노래</a> <!-- 추가됨 -->
   <a onclick="showLibrary()">내 라이브러리</a>
 </div>
 
@@ -160,7 +161,7 @@ function playYouTube(videoId) {
   const iframe = document.getElementById('playerIframe');
   iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
   document.getElementById('youtubePlayer').style.display = 'block';
-  iframe.scrollIntoView({behavior: "smooth"});
+  iframe.scrollIntoView({ behavior: "smooth" });
 }
 
 // 라이브러리에 추가
@@ -176,7 +177,9 @@ function addToLibrary(event, songTitle, videoId) {
 
 // 라이브러리 보기
 function showLibrary() {
-  document.getElementById('albumContainer').style.display = 'none';
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("albumContainer").style.display = "none";
+
   const libraryDiv = document.getElementById('library');
   const list = document.getElementById('libraryList');
   list.innerHTML = '';
