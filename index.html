@@ -13,7 +13,7 @@
     display: flex;
   }
 
-  /* 왼쪽 메뉴 */
+  /* 왼쪽 메뉴 영역 */
   .left-menu {
     width: 220px;
     background-color: #181818;
@@ -21,6 +21,7 @@
     padding: 20px;
   }
   .left-menu h1 { color: #1DB954; margin-bottom: 30px; }
+
   .left-menu a {
     display: block;
     text-decoration: none;
@@ -31,8 +32,11 @@
   }
   .left-menu a:hover { color: white; }
 
-  /* 오른쪽 화면 */
-  .main { flex: 1; padding: 20px 30px; }
+  /* 오른쪽 메인 화면 */
+  .main {
+    flex: 1;
+    padding: 20px 30px;
+  }
 
   .album-container {
     display: grid;
@@ -48,8 +52,10 @@
     padding: 10px;
     border-radius: 12px;
   }
+
   .album img { width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
   .album:hover img { transform: scale(1.05); }
+
   .album p { margin-top: 8px; font-size: 14px; }
 
   .album button {
@@ -89,6 +95,7 @@
     cursor: pointer;
     font-size: 12px;
   }
+  #library li button:hover { background-color: #e74c3c; }
 </style>
 </head>
 <body>
@@ -102,74 +109,27 @@
 
 <div class="main">
 
-  <!-- ⭐ Home 화면: Top 3 노래 -->
-  <div id="homePage">
-    <h2>Top 3 노래</h2>
-    <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
-
-      <div class="album">
-        <img src="cover1.jpg" onclick="playYouTube('4POtvDDCeng')">
-        <p>Top Song 1</p>
-      </div>
-
-      <div class="album">
-        <img src="cover2.jpg" onclick="playYouTube('Flee2PYOl1s')">
-        <p>Top Song 2</p>
-      </div>
-
-      <div class="album">
-        <img src="cover3.jpg" onclick="playYouTube('kIbyP2QW-1Y')">
-        <p>Top Song 3</p>
-      </div>
-
-    </div>
+  <div class="album-container" id="albumContainer">
+    <!-- 15개의 음원 카드 생성 -->
+    <script>
+      const songData = [];
+      for (let i = 1; i <= 15; i++) {
+        songData.push({
+          title: `노래 제목 ${i}`,
+          videoId: "dQw4w9WgXcQ",
+          cover: `cover${(i % 8) + 1}.jpg`
+        });
+      }
+    </script>
   </div>
 
-  <!-- ⭐ 기존 전체 노래 목록 (15곡) -->
-  <div id="albumContainer" style="display:none;">
-
-    <div class="album">
-      <img src="cover1.jpg" onclick="playYouTube('4POtvDDCeng')">
-      <p>노래 제목 1</p>
-      <button onclick="addToLibrary(event,'노래 제목 1','4POtvDDCeng')">내 라이브러리에 추가</button>
-    </div>
-
-    <div class="album">
-      <img src="cover2.jpg" onclick="playYouTube('Flee2PYOl1s')">
-      <p>노래 제목 2</p>
-      <button onclick="addToLibrary(event,'노래 제목 2','Flee2PYOl1s')">내 라이브러리에 추가</button>
-    </div>
-
-    <div class="album">
-      <img src="cover3.jpg" onclick="playYouTube('kIbyP2QW-1Y')">
-      <p>노래 제목 3</p>
-      <button onclick="addToLibrary(event,'노래 제목 3','kIbyP2QW-1Y')">내 라이브러리에 추가</button>
-    </div>
-
-    <!-- 아래는 네가 만든 4~15번 그대로 유지 -->
-    <div class="album"><img src="cover4.jpg" onclick="playYouTube('videoD')"><p>노래 제목 4</p><button onclick="addToLibrary(event,'노래 제목 4','videoD')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover5.jpg" onclick="playYouTube('videoE')"><p>노래 제목 5</p><button onclick="addToLibrary(event,'노래 제목 5','videoE')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover6.jpg" onclick="playYouTube('videoF')"><p>노래 제목 6</p><button onclick="addToLibrary(event,'노래 제목 6','videoF')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover7.jpg" onclick="playYouTube('videoG')"><p>노래 제목 7</p><button onclick="addToLibrary(event,'노래 제목 7','videoG')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover8.jpg" onclick="playYouTube('videoH')"><p>노래 제목 8</p><button onclick="addToLibrary(event,'노래 제목 8','videoH')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover1.jpg" onclick="playYouTube('videoI')"><p>노래 제목 9</p><button onclick="addToLibrary(event,'노래 제목 9','videoI')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover2.jpg" onclick="playYouTube('videoJ')"><p>노래 제목 10</p><button onclick="addToLibrary(event,'노래 제목 10','videoJ')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover3.jpg" onclick="playYouTube('videoK')"><p>노래 제목 11</p><button onclick="addToLibrary(event,'노래 제목 11','videoK')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover4.jpg" onclick="playYouTube('videoL')"><p>노래 제목 12</p><button onclick="addToLibrary(event,'노래 제목 12','videoL')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover5.jpg" onclick="playYouTube('videoM')"><p>노래 제목 13</p><button onclick="addToLibrary(event,'노래 제목 13','videoM')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover6.jpg" onclick="playYouTube('videoN')"><p>노래 제목 14</p><button onclick="addToLibrary(event,'노래 제목 14','videoN')">내 라이브러리에 추가</button></div>
-    <div class="album"><img src="cover7.jpg" onclick="playYouTube('videoO')"><p>노래 제목 15</p><button onclick="addToLibrary(event,'노래 제목 15','videoO')">내 라이브러리에 추가</button></div>
-  </div>
-
-  <!-- 유튜브 플레이어 -->
   <div id="youtubePlayer">
-    <iframe id="playerIframe" src="" frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    <iframe id="playerIframe" src=""
+      frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
   </div>
 
-  <!-- 라이브러리 -->
-  <div id="library" style="display:none;">
+  <div id="library">
     <h2>내 라이브러리</h2>
     <ul id="libraryList"></ul>
   </div>
@@ -178,6 +138,23 @@
 
 <script>
 let librarySongs = [];
+
+// 화면 로딩 시 15개의 앨범 자동 생성
+window.onload = function () {
+  const container = document.getElementById("albumContainer");
+  songData.forEach((song, i) => {
+    const div = document.createElement("div");
+    div.className = "album";
+
+    div.innerHTML = `
+      <img src="${song.cover}" onclick="playYouTube('${song.videoId}')">
+      <p>${song.title}</p>
+      <button onclick="addToLibrary(event, '${song.title}', '${song.videoId}')">내 라이브러리에 추가</button>
+    `;
+
+    container.appendChild(div);
+  });
+};
 
 // 유튜브 재생
 function playYouTube(videoId) {
@@ -190,29 +167,15 @@ function playYouTube(videoId) {
 // 라이브러리에 추가
 function addToLibrary(event, songTitle, videoId) {
   event.stopPropagation();
-  if (!librarySongs.some(song => song.title === songTitle)) {
-    librarySongs.push({ title: songTitle, videoId: videoId });
+  if(!librarySongs.some(song => song.title === songTitle)){
+    librarySongs.push({title: songTitle, videoId: videoId});
     alert(`${songTitle}이(가) 추가되었습니다.`);
   } else {
     alert(`${songTitle}은 이미 있습니다.`);
   }
 }
 
-// 홈 버튼
-function showHome() {
-  document.getElementById("homePage").style.display = "block";
-  document.getElementById("albumContainer").style.display = "none";
-  document.getElementById("library").style.display = "none";
-}
-
-// 노래 버튼
-function showSongs() {
-  document.getElementById("homePage").style.display = "none";
-  document.getElementById("albumContainer").style.display = "grid";
-  document.getElementById("library").style.display = "none";
-}
-
-// 라이브러리 버튼
+// 라이브러리 보기
 function showLibrary() {
   document.getElementById("homePage").style.display = "none";
   document.getElementById("albumContainer").style.display = "none";
@@ -242,7 +205,13 @@ function showLibrary() {
     });
   }
 
-  libraryDiv.style.display = "block";
+  libraryDiv.style.display = 'block';
+}
+
+// 홈 화면
+function showHome() {
+  document.getElementById('albumContainer').style.display = 'grid';
+  document.getElementById('library').style.display = 'none';
 }
 </script>
 
