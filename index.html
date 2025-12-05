@@ -6,42 +6,38 @@
 <title>Spotify Clone Player</title>
 <style>
   * { box-sizing: border-box; margin:0; padding:0; }
-  body { font-family: Arial, sans-serif; background-color: #121212; color: white; }
-
-  header {
+  body { 
+    font-family: Arial, sans-serif; 
+    background-color: #121212; 
+    color: white; 
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
+  }
+
+  /* 왼쪽 메뉴 */
+  .left-menu {
+    width: 220px;
     background-color: #181818;
+    height: 100vh;
+    padding: 20px;
   }
-
-  header h1 { color: #1DB954; font-size: 24px; }
-  .search-bar input {
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    width: 200px;
-    background-color: #333;
-    color: white;
+  .left-menu h1 { color: #1DB954; margin-bottom: 30px; }
+  .left-menu a {
+    display: block;
+    text-decoration: none;
+    color: #b3b3b3;
+    padding: 10px 0;
+    font-weight: bold;
+    cursor: pointer;
   }
+  .left-menu a:hover { color: white; }
 
-  nav {
-    display: flex;
-    gap: 20px;
-    padding: 10px 30px;
-    background-color: #181818;
-  }
-
-  nav a { text-decoration: none; color: #b3b3b3; font-weight: bold; cursor: pointer; }
-  nav a:hover { color: white; }
+  /* 오른쪽 화면 */
+  .main { flex: 1; padding: 20px 30px; }
 
   .album-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
-    padding: 20px 30px;
   }
 
   .album {
@@ -52,10 +48,10 @@
     padding: 10px;
     border-radius: 12px;
   }
-
-  .album img { width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.2s; }
+  .album img { width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
   .album:hover img { transform: scale(1.05); }
   .album p { margin-top: 8px; font-size: 14px; }
+
   .album button {
     margin-top: 8px;
     padding: 5px 10px;
@@ -66,14 +62,14 @@
     cursor: pointer;
     font-size: 12px;
   }
-  .album button:hover { background-color: #17a44c; }
 
-  #youtubePlayer { display: none; text-align: center; margin: 30px 0; }
-  iframe { width: 90%; max-width: 560px; height: 315px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+  #youtubePlayer { display: none; margin-top: 25px; text-align: center; }
+  iframe { width: 80%; max-width: 560px; height: 315px; border-radius: 12px; }
 
-  #library { display: none; padding: 20px 30px; }
+  #library { display: none; }
   #library h2 { margin-bottom: 15px; }
   #library ul { list-style: none; }
+
   #library li {
     background-color: #1e1e1e;
     margin-bottom: 8px;
@@ -93,63 +89,91 @@
     cursor: pointer;
     font-size: 12px;
   }
-  #library li button:hover { background-color: #e74c3c; }
-
-  @media (max-width: 600px) {
-    .search-bar input { width: 120px; }
-    iframe { height: 200px; }
-  }
 </style>
 </head>
 <body>
 
-<header>
+<div class="left-menu">
   <h1>MySpotify</h1>
-  <div class="search-bar">
-    <input type="text" placeholder="검색">
-  </div>
-</header>
-
-<nav>
   <a onclick="showHome()">홈</a>
+  <a onclick="showSongs()">노래</a> <!-- 추가됨 -->
   <a onclick="showLibrary()">내 라이브러리</a>
-</nav>
-
-<div class="album-container" id="albumContainer">
-  <div class="album">
-    <img src="cover1.jpg" alt="노래 1" onclick="playYouTube('dQw4w9WgXcQ')">
-    <p>노래 제목 1</p>
-    <button onclick="addToLibrary(event, '노래 제목 1','dQw4w9WgXcQ')">내 라이브러리에 추가하기</button>
-  </div>
-
-  <div class="album">
-    <img src="cover2.jpg" alt="노래 2" onclick="playYouTube('9bZkp7q19f0')">
-    <p>노래 제목 2</p>
-    <button onclick="addToLibrary(event, '노래 제목 2','9bZkp7q19f0')">내 라이브러리에 추가하기</button>
-  </div>
-
-  <div class="album">
-    <img src="cover3.jpg" alt="노래 3" onclick="playYouTube('3JZ4pnNtyxQ')">
-    <p>노래 제목 3</p>
-    <button onclick="addToLibrary(event, '노래 제목 3','3JZ4pnNtyxQ')">내 라이브러리에 추가하기</button>
-  </div>
-
-  <div class="album">
-    <img src="cover4.jpg" alt="노래 4" onclick="playYouTube('kJQP7kiw5Fk')">
-    <p>노래 제목 4</p>
-    <button onclick="addToLibrary(event, '노래 제목 4','kJQP7kiw5Fk')">내 라이브러리에 추가하기</button>
-  </div>
 </div>
 
-<div id="youtubePlayer">
-  <iframe id="playerIframe" src=""
-    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen></iframe>
-</div>
+<div class="main">
 
-<div id="library">
-  <h2>내 라이브러리</h2>
-  <ul id="libraryList"></ul>
+  <!-- ⭐ Home 화면: Top 3 노래 -->
+  <div id="homePage">
+    <h2>Top 3 노래</h2>
+    <div class="album-container" style="grid-template-columns: repeat(3, 1fr);">
+
+      <div class="album">
+        <img src="cover1.jpg" onclick="playYouTube('4POtvDDCeng')">
+        <p>Top Song 1</p>
+      </div>
+
+      <div class="album">
+        <img src="cover2.jpg" onclick="playYouTube('Flee2PYOl1s')">
+        <p>Top Song 2</p>
+      </div>
+
+      <div class="album">
+        <img src="cover3.jpg" onclick="playYouTube('kIbyP2QW-1Y')">
+        <p>Top Song 3</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ⭐ 기존 전체 노래 목록 (15곡) -->
+  <div id="albumContainer" style="display:none;">
+
+    <div class="album">
+      <img src="cover1.jpg" onclick="playYouTube('4POtvDDCeng')">
+      <p>노래 제목 1</p>
+      <button onclick="addToLibrary(event,'노래 제목 1','4POtvDDCeng')">내 라이브러리에 추가</button>
+    </div>
+
+    <div class="album">
+      <img src="cover2.jpg" onclick="playYouTube('Flee2PYOl1s')">
+      <p>노래 제목 2</p>
+      <button onclick="addToLibrary(event,'노래 제목 2','Flee2PYOl1s')">내 라이브러리에 추가</button>
+    </div>
+
+    <div class="album">
+      <img src="cover3.jpg" onclick="playYouTube('kIbyP2QW-1Y')">
+      <p>노래 제목 3</p>
+      <button onclick="addToLibrary(event,'노래 제목 3','kIbyP2QW-1Y')">내 라이브러리에 추가</button>
+    </div>
+
+    <!-- 아래는 네가 만든 4~15번 그대로 유지 -->
+    <div class="album"><img src="cover4.jpg" onclick="playYouTube('videoD')"><p>노래 제목 4</p><button onclick="addToLibrary(event,'노래 제목 4','videoD')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover5.jpg" onclick="playYouTube('videoE')"><p>노래 제목 5</p><button onclick="addToLibrary(event,'노래 제목 5','videoE')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover6.jpg" onclick="playYouTube('videoF')"><p>노래 제목 6</p><button onclick="addToLibrary(event,'노래 제목 6','videoF')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover7.jpg" onclick="playYouTube('videoG')"><p>노래 제목 7</p><button onclick="addToLibrary(event,'노래 제목 7','videoG')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover8.jpg" onclick="playYouTube('videoH')"><p>노래 제목 8</p><button onclick="addToLibrary(event,'노래 제목 8','videoH')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover1.jpg" onclick="playYouTube('videoI')"><p>노래 제목 9</p><button onclick="addToLibrary(event,'노래 제목 9','videoI')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover2.jpg" onclick="playYouTube('videoJ')"><p>노래 제목 10</p><button onclick="addToLibrary(event,'노래 제목 10','videoJ')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover3.jpg" onclick="playYouTube('videoK')"><p>노래 제목 11</p><button onclick="addToLibrary(event,'노래 제목 11','videoK')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover4.jpg" onclick="playYouTube('videoL')"><p>노래 제목 12</p><button onclick="addToLibrary(event,'노래 제목 12','videoL')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover5.jpg" onclick="playYouTube('videoM')"><p>노래 제목 13</p><button onclick="addToLibrary(event,'노래 제목 13','videoM')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover6.jpg" onclick="playYouTube('videoN')"><p>노래 제목 14</p><button onclick="addToLibrary(event,'노래 제목 14','videoN')">내 라이브러리에 추가</button></div>
+    <div class="album"><img src="cover7.jpg" onclick="playYouTube('videoO')"><p>노래 제목 15</p><button onclick="addToLibrary(event,'노래 제목 15','videoO')">내 라이브러리에 추가</button></div>
+  </div>
+
+  <!-- 유튜브 플레이어 -->
+  <div id="youtubePlayer">
+    <iframe id="playerIframe" src="" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <!-- 라이브러리 -->
+  <div id="library" style="display:none;">
+    <h2>내 라이브러리</h2>
+    <ul id="libraryList"></ul>
+  </div>
+
 </div>
 
 <script>
@@ -160,29 +184,45 @@ function playYouTube(videoId) {
   const iframe = document.getElementById('playerIframe');
   iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
   document.getElementById('youtubePlayer').style.display = 'block';
-  iframe.scrollIntoView({behavior: "smooth"});
+  iframe.scrollIntoView({ behavior: "smooth" });
 }
 
 // 라이브러리에 추가
 function addToLibrary(event, songTitle, videoId) {
-  event.stopPropagation(); // 이미지 클릭 방지
-  if(!librarySongs.some(song => song.title === songTitle)){
-    librarySongs.push({title: songTitle, videoId: videoId});
-    alert(`${songTitle}이(가) 내 라이브러리에 추가되었습니다.`);
+  event.stopPropagation();
+  if (!librarySongs.some(song => song.title === songTitle)) {
+    librarySongs.push({ title: songTitle, videoId: videoId });
+    alert(`${songTitle}이(가) 추가되었습니다.`);
   } else {
-    alert(`${songTitle}은 이미 라이브러리에 있습니다.`);
+    alert(`${songTitle}은 이미 있습니다.`);
   }
 }
 
-// 라이브러리 표시
+// 홈 버튼
+function showHome() {
+  document.getElementById("homePage").style.display = "block";
+  document.getElementById("albumContainer").style.display = "none";
+  document.getElementById("library").style.display = "none";
+}
+
+// 노래 버튼
+function showSongs() {
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("albumContainer").style.display = "grid";
+  document.getElementById("library").style.display = "none";
+}
+
+// 라이브러리 버튼
 function showLibrary() {
-  document.getElementById('albumContainer').style.display = 'none';
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("albumContainer").style.display = "none";
+
   const libraryDiv = document.getElementById('library');
   const list = document.getElementById('libraryList');
   list.innerHTML = '';
 
-  if(librarySongs.length === 0){
-    list.innerHTML = '<li>라이브러리에 곡이 없습니다.</li>';
+  if (librarySongs.length === 0) {
+    list.innerHTML = '<li>라이브러리가 비었습니다.</li>';
   } else {
     librarySongs.forEach((song, index) => {
       const li = document.createElement('li');
@@ -195,155 +235,16 @@ function showLibrary() {
         e.stopPropagation();
         librarySongs.splice(index, 1);
         showLibrary();
-      }
+      };
 
       li.appendChild(removeBtn);
       list.appendChild(li);
     });
   }
 
-  libraryDiv.style.display = 'block';
-}
-
-// 홈 표시
-function showHome() {
-  document.getElementById('albumContainer').style.display = 'grid';
-  document.getElementById('library').style.display = 'none';
+  libraryDiv.style.display = "block";
 }
 </script>
 
-</body>
-
-</html>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <title>My Music Player</title>
-
-  <!-- Vibrant.js 색 추출 라이브러리 -->
-  <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"></script>
-
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      background: #222;
-      color: white;
-      transition: background 1s ease;
-    }
-
-    .container {
-      padding: 20px;
-    }
-
-    .song {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.1);
-      padding: 10px;
-      border-radius: 10px;
-      transition: 0.3s;
-    }
-
-    .song:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
-    .song img {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      margin-right: 15px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🎵 My Music Player</h1>
-    <p>노래를 클릭하면 배경이 커버 이미지 기반 색으로 바뀝니다!</p>
-
-    <!-- 노래 리스트 -->
-    <div id="songList"></div>
-
-    <!-- 오디오 플레이어 -->
-    <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;"></audio>
-  </div>
-
-  <script>
-    /* -------------------------------
-      1. 노래 데이터
-    --------------------------------*/
-    const songs = [
-      {
-        title: "노래 1",
-        file: "songs/song1.mp3",
-        cover: "covers/cover1.jpg"
-      },
-      {
-        title: "노래 2",
-        file: "songs/song2.mp3",
-        cover: "covers/cover2.jpg"
-      },
-      {
-        title: "노래 3",
-        file: "songs/song3.mp3",
-        cover: "covers/cover3.jpg"
-      }
-    ];
-
-    const audio = document.getElementById("audioPlayer");
-    const songListDiv = document.getElementById("songList");
-
-
-    /* -------------------------------
-      2. HTML에 노래 목록 표시
-    --------------------------------*/
-    songs.forEach((song, index) => {
-      const div = document.createElement("div");
-      div.className = "song";
-      div.innerHTML = `
-        <img src="${song.cover}" alt="cover">
-        <div>
-          <strong>${song.title}</strong><br>
-          <small>${song.file}</small>
-        </div>
-      `;
-      div.onclick = () => playSong(index);
-      songListDiv.appendChild(div);
-    });
-
-
-    /* -------------------------------
-      3. 앨범 커버 색 추출 → 배경 변경
-    --------------------------------*/
-    function applyColorFromCover(coverPath) {
-      Vibrant.from(coverPath).getPalette().then(palette => {
-        const c1 = palette.Vibrant?.getHex() || "#444";
-        const c2 = palette.DarkVibrant?.getHex() || "#000";
-
-        document.body.style.background = `
-          linear-gradient(135deg, ${c1}, ${c2})
-        `;
-      });
-    }
-
-
-    /* -------------------------------
-      4. 노래 재생 함수
-    --------------------------------*/
-    function playSong(index) {
-      const song = songs[index];
-
-      audio.src = song.file;
-      audio.play();
-
-      // 배경색 변경
-      applyColorFromCover(song.cover);
-    }
-  </script>
 </body>
 </html>
